@@ -1,0 +1,25 @@
+environment: production 
+
+ingress:
+  secretName: production-tls-cert
+
+app:
+  replicaCount: 3
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+database:
+  dbName: "prod-app-db"
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  storage: "2Gi"

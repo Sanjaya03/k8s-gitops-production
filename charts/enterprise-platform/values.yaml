@@ -1,0 +1,38 @@
+environment: default
+
+ingress:
+  enabled: true
+  host: api.mycompany.com
+  secretName: app-tls-cert
+
+app:
+  replicaCount: 1
+  image:
+    repository: nginxinc/nginx-unprivileged
+    tag: alpine
+  port: 8080
+  servicePort: 80
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "32Mi"
+    limits:
+      cpu: "100m"
+      memory: "64Mi"
+
+database:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: postgres
+    tag: "16-alpine"
+  dbName: "app-db"
+  port: 5432
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "250m"
+      memory: "256Mi"
+  storage: "1Gi"
