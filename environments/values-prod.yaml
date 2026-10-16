@@ -23,3 +23,6 @@ database:
       cpu: "500m"
       memory: "512Mi"
   storage: "2Gi"
+
+pgbouncer:
+  enabled: true
