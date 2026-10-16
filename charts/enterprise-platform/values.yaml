@@ -36,3 +36,19 @@ database:
       cpu: "250m"
       memory: "256Mi"
   storage: "1Gi"
+
+pgbouncer:
+    enabled: false
+    dbUser: postgres
+    port: 6432
+    poolMode: "transaction"
+    maxClientConn: 1000
+    defaultPoolSize: 20
+    reservePoolSize: 5
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "64Mi"
+      limits:
+        cpu: "100m"
+        memory: "128Mi"

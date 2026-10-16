@@ -13,6 +13,11 @@ spec:
         - podSelector:
             matchLabels:
               app: {{ .Release.Name }}-app
+        {{- if .Values.pgbouncer.enabled }}
+        - podSelector:
+            matchLabels:
+              app: {{ .Release.Name }}-pgbouncer
+        {{- end }}
       ports:
         - protocol: TCP
           port: {{ .Values.database.port }}

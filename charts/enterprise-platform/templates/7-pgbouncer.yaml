@@ -1,0 +1,100 @@
+{{- if .Values.pgbouncer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-pgbouncer
+  labels:
+    app: {{ .Release.Name }}-pgbouncer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+        app: {{ .Release.Name }}-pgbouncer
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-pgbouncer
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 70
+        fsGroup: 70
+      containers:
+        - name: pgbouncer
+          image: edoburu/pgbouncer:v1.22.1
+          ports:
+           - containerPort: {{ .Values.pgbouncer.port }}
+             name: pgbouncer
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: DB_HOST
+              value: {{ .Release.Name }}-postgres-headless
+            - name: DB_PORT
+              value: {{ .Values.database.port }}
+            - name: DB_NAME
+              value: {{ .Values.database.dbName }}
+            - name: DB_USER
+              value: {{ .Values.pgbouncer.dbUser }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-db-secret
+                  key: password
+            - name: POOL_MODE
+              value: {{ .Values.pgbouncer.poolMode }}
+            - name: MAX_CLIENT_CONN
+              value: {{ .Values.pgbouncer.maxClientConn }}
+            - name: DEFAULT_POOL_SIZE
+              value: {{ .Values.pgbouncer.defaultPoolSize }}
+            - name: RESERVE_POOL_SIZE
+              value: {{ .Values.pgbouncer.reservePoolSize }}
+            - name: ADMIN_USERS
+              value: {{ .Values.pgbouncer.dbUser }}
+            - name: STATS_USERS
+              value: {{ .Values.pgbouncer.dbUser }}
+          resources:
+            {{- toYaml .Values.pgbouncer.resources | nindent 12 }}
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.pgbouncer.port }}
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.pgbouncer.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          volumeMounts:
+            - name: pgbouncer-config-dir
+              mountPath: /etc/pgbouncer
+            - name: tmp-dir
+              mountPath: /tmp
+      volumes: 
+        - name: pgbouncer-config-dir
+          emptyDir: {}
+        - name: tmp-dir
+          emptyDir: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-pgbouncer-svc
+  labels:
+    app: {{ .Release.Name }}-pgbouncer
+spec:
+  type: ClusterIP
+  selector:
+      app: {{ .Release.Name }}-pgbouncer
+  ports:
+    - port: {{ .Values.pgbouncer.port }}
+      targetPort: {{ .Values.pgbouncer.port }}
+      name: pgbouncer
+
+{{- end }}
