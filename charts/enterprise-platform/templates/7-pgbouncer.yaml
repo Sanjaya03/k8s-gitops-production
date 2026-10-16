@@ -21,7 +21,7 @@ spec:
         fsGroup: 70
       containers:
         - name: pgbouncer
-          image: edoburu/pgbouncer:v1.22.1
+          image: edoburu/pgbouncer:latest
           ports:
            - containerPort: {{ .Values.pgbouncer.port }}
              name: pgbouncer
