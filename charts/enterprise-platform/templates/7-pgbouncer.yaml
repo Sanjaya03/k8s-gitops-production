@@ -35,7 +35,7 @@ spec:
             - name: DB_HOST
               value: {{ .Release.Name }}-postgres-headless
             - name: DB_PORT
-              value: {{ .Values.database.port }}
+              value: {{ .Values.database.port | quote }}
             - name: DB_NAME
               value: {{ .Values.database.dbName }}
             - name: DB_USER
@@ -46,13 +46,13 @@ spec:
                   name: {{ .Release.Name }}-db-secret
                   key: password
             - name: POOL_MODE
-              value: {{ .Values.pgbouncer.poolMode }}
+              value: {{ .Values.pgbouncer.poolMode | quote }}
             - name: MAX_CLIENT_CONN
-              value: {{ .Values.pgbouncer.maxClientConn }}
+              value: {{ .Values.pgbouncer.maxClientConn | quote }}
             - name: DEFAULT_POOL_SIZE
-              value: {{ .Values.pgbouncer.defaultPoolSize }}
+              value: {{ .Values.pgbouncer.defaultPoolSize | quote }}
             - name: RESERVE_POOL_SIZE
-              value: {{ .Values.pgbouncer.reservePoolSize }}
+              value: {{ .Values.pgbouncer.reservePoolSize | quote }}
             - name: ADMIN_USERS
               value: {{ .Values.pgbouncer.dbUser }}
             - name: STATS_USERS
