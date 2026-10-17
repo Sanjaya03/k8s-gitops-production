@@ -36,6 +36,8 @@ spec:
               value: {{ .Release.Name }}-postgres-headless
             - name: DB_PORT
               value: {{ .Values.database.port | quote }}
+            - name: LISTEN_PORT
+              value: {{ .Values.pgbouncer.port | quote }}
             - name: DB_NAME
               value: {{ .Values.database.dbName }}
             - name: DB_USER
